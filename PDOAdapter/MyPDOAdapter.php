@@ -14,7 +14,7 @@ class MyPDOAdapter extends PDOAdapter
     {
         //db connector config
         $this->_dbUse     = 'master';
-        $this->_dbConfig  = BaseInitialize::loadAppsConfig('mysql');
+        $this->_dbConfig  = require_once "../utils/MysqlConfig.php";
         //PDOAdapter config
         $this->_prefix    = $this->_dbConfig[$this->_dbUse]["db_table_pre"];
         $this->_debug     = $this->_dbConfig[$this->_dbUse]["db_debug"];
@@ -32,7 +32,7 @@ class MyPDOAdapter extends PDOAdapter
     {
         $logFormat   = "[%s] - %s\n";
         $logFileName = 'db-' . date('Y-m-d') . '.log';
-        $logFile     = APPS_BASE_DIR.DIRECTORY_SEPARATOR.'Logs'.DIRECTORY_SEPARATOR. $logFileName;
+        $logFile     = '../tests/logs'.DIRECTORY_SEPARATOR. $logFileName;
         $logMessage  = sprintf($logFormat, date('Y-m-d H:i:s'), $logMessage);
 
         return file_put_contents($logFile, $logMessage, FILE_APPEND);

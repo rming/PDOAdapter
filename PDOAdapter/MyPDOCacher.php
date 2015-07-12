@@ -1,5 +1,5 @@
 <?php
-
+require_once "../utils/BaseMemcached.class.php";
 
 class MyPDOCacher implements PDOCacher
 {
@@ -9,7 +9,7 @@ class MyPDOCacher implements PDOCacher
 
     protected function __construct()
     {
-        $memcacheConfig = BaseInitialize::loadAppsConfig('memcache');
+        $memcacheConfig = require_once "../utils/MemcacheConfig.php";
         if($memcacheConfig && isset($memcacheConfig["memcache_namespace"], $memcacheConfig["memcache_server"])) {
             $memServer    = $memcacheConfig["memcache_server"];
             $memNamespace = $memcacheConfig["memcache_namespace"];
