@@ -9,7 +9,7 @@ class MyPDOCacher implements PDOCacher
 
     protected function __construct()
     {
-        $memcacheConfig = require_once "../utils/MemcacheConfig.php";
+        $memcacheConfig = require "../utils/MemcacheConfig.php";
         if($memcacheConfig && isset($memcacheConfig["memcache_namespace"], $memcacheConfig["memcache_server"])) {
             $memServer    = $memcacheConfig["memcache_server"];
             $memNamespace = $memcacheConfig["memcache_namespace"];

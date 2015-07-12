@@ -59,6 +59,7 @@ class PDOAdapter
     public function setDbConfig(array $dbConfig)
     {
         $this->_dbConfig = $dbConfig;
+        return $this;
     }
 
     /**
@@ -68,6 +69,17 @@ class PDOAdapter
     public function setDbUse($dbUse)
     {
         $this->_dbUse = $dbUse;
+        return $this;
+    }
+
+    /**
+     * 设置主键
+     * @param string $pk
+     */
+    public function setPK($pk)
+    {
+        $this->_pk = $pk;
+        return $this;
     }
 
     /**

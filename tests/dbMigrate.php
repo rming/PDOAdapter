@@ -4,7 +4,7 @@ ini_set('display_errors','On');
 
 require_once "../PDOAdapter/MyPDOAdapter.php";
 $db = MyPDOAdapter::model();
-(new dbMigrate)->run();
+(new dbMigrate($db))->run();
 
 
 class dbMigrate 
@@ -14,7 +14,7 @@ class dbMigrate
     public function __construct($db)
     {
         $this->db     = $db;
-        $this->action = count($argv)>1 ? $argv[1] : 'createTable';
+        $this->action = count($GLOBALS['argv'])>1 ? $GLOBALS['argv'][1] : 'createTable';
     }
 
     public function run()
@@ -25,9 +25,7 @@ class dbMigrate
     protected function createTable()
     {
         //table creating scripts
-        $query = <<<EOT
--- Create syntax for TABLE 'instant_users'
-CREATE TABLE `instant_users` (
+        $query = "CREATE TABLE `app_instant_users` (
   `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `role_id` int(11) NOT NULL DEFAULT '0',
   `score` int(11) NOT NULL DEFAULT '0',
@@ -39,9 +37,7 @@ CREATE TABLE `instant_users` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Create syntax for TABLE 'users'
-CREATE TABLE `users` (
+CREATE TABLE `app_users` (
   `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `role_id` int(11) NOT NULL DEFAULT '0',
   `score` int(11) NOT NULL DEFAULT '0',
@@ -53,11 +49,68 @@ CREATE TABLE `users` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-EOT;
+";
         //create test tables
-        $res = $this->db->query($query);
-        var_dump($res);
+        try {
+            $res = $this->db->getDb()->exec($query);
+        } catch (Exception $e) {
+            $res = false;
+        }
+
+        if ($res === false) {
+            echo "table created failed\n";
+        } else {
+            echo "table created success\n";
+        }
     }
+
+    protected function insert()
+    {
+        $usersModel = MyPDOAdapter::model('users');
+        $usersModel->setDbUse('master');
+        $usersModel->setPK('user_id');
+
+
+        $password = '13456';
+        $userData = [
+            'username'   => $this->randomChar(),
+            'role_id'    => mt_rand(0,10),
+            'score'      => mt_rand(0,10000),
+            'email'      => $this->randomChar()."@gmail.com",
+            'created_at' => date('Y-m-d H:i:s'),
+        ];
+
+        $update = false;
+        if ($usersModel->insert($userData)->result()) {
+            $user   = $usersModel->lasteInsert()->row();
+            echo "INSERT User{{$user->user_id}}\n";
+            $update = $usersModel->update(
+                ['password' => sha1($user->user_id.'=>'.$password)],
+                ['user_id' => $user->user_id]
+            )->result();
+            if ($update) {
+                echo "UPDATE User{{$user->user_id}}\n\n";
+            }
+        }
+    }
+
+    public function insertBatch()
+    {
+        for($i=1; $i<100; $i++){
+            $this->insert();
+        }
+    }
+
+    protected function randomChar($length = 8)
+    {
+        $randChar = '';
+        for ($i = 0; $i < $length; $i++)
+        {
+            $randChar .= chr(mt_rand(97, 122));
+        }
+        return $randChar;
+    }
+
 }
 
 

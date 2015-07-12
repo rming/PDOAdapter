@@ -14,11 +14,11 @@ class MyPDOAdapter extends PDOAdapter
     {
         //db connector config
         $this->_dbUse     = 'master';
-        $this->_dbConfig  = require_once "../utils/MysqlConfig.php";
+        $this->_dbConfig  = require "../utils/MysqlConfig.php";
         //PDOAdapter config
         $this->_prefix    = $this->_dbConfig[$this->_dbUse]["db_table_pre"];
         $this->_debug     = $this->_dbConfig[$this->_dbUse]["db_debug"];
-        $this->_fetchType = PDO::FETCH_ASSOC;
+        $this->_fetchType = PDO::FETCH_OBJ;
 
         // get db connection manager
         $this->_connector = MyPDOConnector::getInstance()->initConfig($this->_dbConfig);

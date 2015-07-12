@@ -5,17 +5,17 @@ ini_set('display_errors','On');
 require_once "../PDOAdapter/MyPDOAdapter.php";
 require_once "UsersModel.php";
 
-$db = MyPDOAdapter::model();
-(new tester)->run();
+$userModel = new UsersModel();
+(new tester($userModel))->run();
 
 class tester {
 
-    protected $db     = null;
+    protected $model  = null;
     protected $action = null;
-    public function __construct($db)
+    public function __construct($model)
     {
-        $this->db     = $db;
-        $this->action = count($argv)>1 ? $argv[1] : 'test';
+        $this->model  = $model;
+        $this->action = count($GLOBALS['argv'])>1 ? $GLOBALS['argv'][1] : 'test';
     }
 
     public function run()
@@ -23,28 +23,31 @@ class tester {
         call_user_func([$this, $this->action]);
     }
 
-    protected function tester()
+    protected function test()
     {
-        $db = MyPDOAdapter::model();
-        $testModel = MyPDOAdapter::model('test');
         // rows
         $sql = "SELECT * FROM {{table}};";
-        $res = $testModel->query($sql)->rows();
+        $res = $this->model->query($sql)->rows();
+        echo sprintf("%s\n",var_export($res));
 
         // row
-        $res = $testModel->query($sql)->row();
+        $res = $this->model->query($sql)->row();
+        echo sprintf("%s\n",var_export($res));
 
         // affected rows
-        $res = $testModel->query($sql)->result();
+        $res = $this->model->query($sql)->result();
+        echo sprintf("%s\n",var_export($res));
 
         // count rows
         $sql = "SELECT count(*) FROM {{table}};";
-        $res = $testModel->query($sql)->scalar();
+        $res = $this->model->query($sql)->scalar();
+        echo sprintf("%s\n",var_export($res));
 
         // bind param and get a row
         // Style 1
         $sql = "SELECT * FROM {{table}} WHERE role_id=?;";
-        $res = $testModel->query($sql,6)->rows();
+        $res = $this->model->query($sql,6)->rows();
+        echo sprintf("%s\n",var_export($res));
 
         $condition = [
             ':role_id' => 6,
@@ -53,21 +56,26 @@ class tester {
         // Style 2
         // Style 2.1
         $sql = "SELECT * FROM {{table}} WHERE role_id=? AND score>=?;";
-        $res = $testModel->query($sql,[6, 5000])->rows();
+        $res = $this->model->query($sql,[6, 5000])->rows();
+        echo sprintf("%s\n",var_export($res));
 
         // Style 2.2
-        $res = $testModel->query($sql,array_values($condition))->rows();
+        $res = $this->model->query($sql,array_values($condition))->rows();
+        echo sprintf("%s\n",var_export($res));
 
         // Style 3
         $sql = "SELECT * FROM {{table}} WHERE role_id=:role_id AND score>=:score;";
-        $res = $testModel->query($sql,$condition)->rows();
+        $res = $this->model->query($sql,$condition)->rows();
+        echo sprintf("%s\n",var_export($res));
 
         // find by pk(default `id`)
-        $res = $testModel->find(2)->row();
+        $res = $this->model->find(2)->row();
+        echo sprintf("%s\n",var_export($res));
 
-        $res = $testModel->where(['username LIKE'=>"%f%",'role_id'=>2], 'id desc', 10,0)->rows();
+        $res = $this->model->where(['username LIKE'=>"%f%",'role_id'=>2], 'id desc', 10,0)->rows();
+        echo sprintf("%s\n",var_export($res));
 
-        $res = $testModel->where(
+        $res = $this->model->where(
             [
                 'role_id' =>2,
                 'score >' => 5000,
@@ -81,34 +89,9 @@ class tester {
             'score desc',
             10,0
         )->rows();
+        echo sprintf("%s\n",var_export($res));
 
-
-        // instant model
-        // find by pk
-        // table name without prefix
-        $res = $db->test->find(226)->row();
-
-        // instant model
-        // insert
-        $res = $db->test->insert(
-            [
-                'username'   => sprintf("test_%s", $this->randomChar()),
-                'email'      => sprintf("test_%s@gmail.com", $this->randomChar()),
-                'created_at' => date('Y-m-d H:i:s'),
-            ]
-        )->result();
-
-        $res = $db->test->update(
-            [
-                'username'  => 'rmingwang',
-            ],
-            ['id' => 5]
-        )->result();
-
-        $res = $db->test->count(['score <='=>5000])->scalar();
-
-        $res = $testModel->delete(['id'=>mt_rand(20,40)])->result();
-
-        var_dump($res);
+        $res = $this->model->delete(['user_id'=>mt_rand(20,40)])->result();
+        echo sprintf("%s\n",var_export($res));
     }
 }
