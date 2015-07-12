@@ -23,9 +23,13 @@ php classes extends PDO query
 
 ##简介
 代码实现主要包括三部分：
+
 1.  单例模式的PDO连接管理 `PDOConnector` 
+
 2.  基本的 CURD 封装 `PDOAdapter`
+
 3.  基于查询语句的缓存 `PDOCacher` 
+
 4.  完整的数据查询记录，错误信息 `PDOAdapter::log($logMessage)`
 
 ##使用
