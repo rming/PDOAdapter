@@ -1,7 +1,7 @@
 ## TESTS
 
 ###database migrate
-```
+```perl
 #need permission to write logs
 chmod 777 logs
 #create table
@@ -14,11 +14,11 @@ php dbMigrate.php insertBatch
 ```
 
 ###instant model test case
-````
+````perl
 php testInstantModel.php
 ````
 
 ###model test case
-````
+````perl
 php testModel.php
 ````
