@@ -11,7 +11,7 @@ interface PDOCacher
     public static function getInstance();
 
     /**
-     * 设置缓存，按需重载
+     * 设置缓存
      * @param  string $cachename
      * @param  mixed $value
      * @param  int $expired
@@ -20,14 +20,14 @@ interface PDOCacher
     public function setCache($cachename, $value, $expired);
 
     /**
-     * 获取缓存，按需重载
+     * 获取缓存
      * @param  string $cachename
      * @return mixed
      */
     public function getCache($cachename);
 
     /**
-     * 清除缓存，按需重载
+     * 清除缓存
      * @param  string $cachename
      * @return boolean
      */
