@@ -1,0 +1,6 @@
+*.swp
+*.log
+*.pyc
+*.bak
+.DS_Store
+._.DS_Store
