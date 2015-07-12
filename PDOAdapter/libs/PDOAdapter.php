@@ -83,6 +83,16 @@ class PDOAdapter
     }
 
     /**
+     * 设置的PDO fetchStype
+     * @return PDO FETCH_* const
+     */
+    protected function setFetchType($fetchType)
+    {
+        $this->_fetchType = $fetchType;
+        return $this;
+    }
+
+    /**
      * 获取设置的PDO fetchStype
      * @return PDO FETCH_* const
      */
