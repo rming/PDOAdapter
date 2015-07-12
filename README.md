@@ -1,7 +1,25 @@
-[TOC]
-
 # PDOAdapter
 php classes extends PDO query
+
+##TOC
+*   [PDOAdapter](#pdoadapter)
+    *   [简介](#_1)
+    *   [使用](#_2)
+    *   [目录](#_3)
+    *   [USAGE](#usage)
+        *   [编写 model](#model)
+            *   [model 文件](#model_1)
+            *   [Instant model](#instant-model)
+        *   [数据操作](#_4)
+            *   [Quick Start](#quick-start)
+            *   [查询 有哪些方法？](#_5)
+            *   [结果 有哪些方法？](#_6)
+            *   [简单地查询组合](#_7)
+        *   [进阶](#_8)
+            *   [缓存查询](#_9)
+            *   [动态设置属性](#_10)
+            *   [获得当前PDO实例](#pdo)
+        *   [查询记录](#_11)
 
 ##简介
 代码实现主要包括三部分：
