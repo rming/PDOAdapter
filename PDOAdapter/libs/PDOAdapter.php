@@ -11,7 +11,7 @@ class PDOAdapter
     protected $_debug      = false;
     protected $_prefix     = null;
     protected $_dbUse      = 'maser';
-    protected $_dbConfig   = [];
+    protected $_dbConfigs  = [];
     protected $_connector  = null;
     //是否使用缓存查询，默认关闭
     protected $_cacheQuery = false;
@@ -54,11 +54,11 @@ class PDOAdapter
 
     /**
      * 切换当前使用的数据库配置
-     * @param array $dbConfig 
+     * @param array $dbConfigs 
      */
-    public function setDbConfig(array $dbConfig)
+    public function setDbConfig(array $dbConfigs)
     {
-        $this->_dbConfig = $dbConfig;
+        $this->_dbConfigs = $dbConfigs;
         return $this;
     }
 
@@ -280,7 +280,7 @@ class PDOAdapter
     {
         //generate unique key by dbConfig, dbUse, sql, params 
         $cacheKey = sha1(
-            serialize($this->_dbConfig).
+            serialize($this->_dbConfigs).
             $this->_dbUse.
             $this->_sql.
             serialize($this->_params).

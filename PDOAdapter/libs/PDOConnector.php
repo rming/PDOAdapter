@@ -6,6 +6,7 @@ class PDOConnector
 {
     protected static $_instance = null;
 
+    protected $_dbConfigs  = [];
     protected $_dbConfig   = [];
     protected $_links      = [];
     protected $_dbType     = null;
@@ -36,14 +37,19 @@ class PDOConnector
     {
         if (isset($this->_links[$dbUse])) {
             return $this->_links[$dbUse];
-        } elseif (!empty($this->_dbConfig[$dbUse])) {
-            $this->initConfig($this->_dbConfig[$dbUse]);
+        } elseif (!empty($this->_dbConfigs[$dbUse])) {
+            $this->initConfig($this->_dbConfigs[$dbUse]);
             return $this->_links[$dbUse] = $this->newConnection();
         } else {
             throw new PDOException(sprintf('Unknow database configration :%s', $dbUse));
         }
     }
 
+    public function loadConfigs(array $dbConfigs)
+    {
+        $this->_dbConfigs = $dbConfigs;
+        return $this;
+    }
     public function initConfig(array $dbConfig)
     {
         $this->_dbConfig   = $dbConfig;
