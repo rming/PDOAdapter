@@ -21,7 +21,7 @@ class MyPDOAdapter extends PDOAdapter
         $this->_fetchType = PDO::FETCH_OBJ;
 
         // get db connection manager
-        $this->_connector = MyPDOConnector::getInstance()->initConfig($this->_dbConfigs);
+        $this->_connector = MyPDOConnector::getInstance()->loadConfigs($this->_dbConfigs);
         $this->_cacher    = MyPDOCacher::getInstance();
 
         parent::__construct($table);
