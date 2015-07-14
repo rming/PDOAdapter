@@ -1,3 +1,5 @@
+> 代码结构的合理化比执行速度的优化更重要
+
 # PDOAdapter
 php classes extends PDO query
 
