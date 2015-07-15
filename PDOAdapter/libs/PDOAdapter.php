@@ -499,9 +499,15 @@ class PDOAdapter
 
         //order by
         if ($orderBy) {
-            $paramKey = $this->uniqueParam($bindParams, ":order_by");
-            $bindParams[$paramKey] = $orderBy;
-            $orderBy = sprintf("ORDER BY %s", $paramKey);
+            //escape bad string in column
+            $orderByArr = explode(',', $orderBy);
+            $orderByArr = array_map(function($orderBy){
+                $orderBy = preg_replace('/^(\S*?)(\s+?)(desc|asc)+?$/i','`'.trim('${1}','`').'`'.' ${3}', trim($orderBy), '-1', $count);
+                return $count? $orderBy : false;
+            }, $orderByArr);
+            //implode to str
+            $orderByStr = implode(',', array_filter($orderByArr)); 
+            $orderBy    = $orderByStr ? sprintf("ORDER BY %s", $orderByStr) : '';
         }
 
         //limit offset
