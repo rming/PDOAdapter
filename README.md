@@ -16,6 +16,7 @@ php classes extends PDO query
             *   [Quick Start](#quick-start)
             *   [查询 有哪些方法？](#查询-有哪些方法)
             *   [结果 有哪些方法？](#结果-有哪些方法)
+            *   [表名占位符](#表名占位符)
             *   [简单地查询组合](#简单地查询组合)
         *   [进阶](#进阶)
             *   [缓存查询](#缓存查询)
@@ -202,6 +203,16 @@ class UsersModel extends MyPDOAdapter
 
 **备注**：返回 `对象` 还是 `数组` 取决于设置的PDO fetchStyle
 
+####表名占位符
+在 model 文件中使用自定义查询 (`query($sql)` )时，可以使用表名占位符 
+```php
+{{table}}
+```
+程序会在生成SQL语句的时候对它进行替换
+
+```php
+$this->_prefix.$this->_table
+```
 
 ####简单地查询组合
 **常用组合：**
