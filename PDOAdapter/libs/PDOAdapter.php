@@ -466,17 +466,56 @@ class PDOAdapter
 
         array_walk($conditions, function($v,$k) use (&$whereClouse, &$bindParams){
             if (is_array($v)) {
-                //['BETWEEN :a AND :b'=>[':a'=>'1',':b'=>'2']]
-                foreach ($v as $key => $value) {
-                    $paramKey = $this->uniqueParam($bindParams, $key);
-                    $bindParams[$paramKey] = $value;
-                    //把参数绑定重复的键名更换掉
-                    $k = str_replace($key, $paramKey, $k);
+                //['BETWEEN '=>['1','2']]
+                //['IN'=>['1','2']]
+                if (preg_match('/^([_a-z0-9]+?)(\s+)(between|in)$/i', trim($k), $reg)) {
+                    $condition = strtolower($reg[3]);
+                    $makeParamKey = function($inVals, $prefix = null) {
+                        foreach ($inVals as $key => $value) {
+                            yield sprintf("%s%s", $prefix, $key) => $value;
+                        }
+                    };
+                    switch ($condition) {
+                        case 'in':
+                            $whereClouse .= sprintf("`%s` IN (", $reg[1]);
+                            foreach ($makeParamKey($v, ':in_') as $key => $value) {
+                                $paramKey = $this->uniqueParam($bindParams, $key);
+                                $bindParams[$paramKey] = $value;
+                                $whereClouse .= sprintf("%s,", $key); 
+                            }
+                            $whereClouse = rtrim($whereClouse, ',') . ") ";
+                            break;
+                        case 'between':
+                            $v = iterator_to_array($makeParamKey($v, ':in_'));
+                            $keys = array_keys($v);
+                            $vals = array_values($v);
+                            //between
+                            $paramKey = $this->uniqueParam($bindParams, current($keys));
+                            $bindParams[$paramKey] = current($vals);
+                            $whereClouse .= sprintf("`%s` BETWEEN %s ", $reg[1], $paramKey);
+                            //and
+                            $paramKey = $this->uniqueParam($bindParams, end($keys));
+                            $bindParams[$paramKey] = end($vals);
+                            $whereClouse .= sprintf("AND %s ", $paramKey);
+                            break;
+                        default:
+                            return;
+                            break;
+                    }
+                } else {
+                    //['BETWEEN :a AND :b'=>[':a'=>'1',':b'=>'2']]
+                    foreach ($v as $key => $value) {
+                        $paramKey = $this->uniqueParam($bindParams, $key);
+                        $bindParams[$paramKey] = $value;
+                        //把参数绑定重复的键名更换掉
+                        $k = str_replace($key, $paramKey, $k);
+                    }
+                    $whereClouse .= sprintf("%s", $k);
                 }
-                $whereClouse .= sprintf("%s", $k);
+
             } else {
                 //需要参数绑定的查询条件
-                if (preg_match('/^([a-z]+?)(\s+)(>|<|>=|<=|=|!=|between|like)$/i', $k, $reg)) {
+                if (preg_match('/^([_a-z0-9]+?)(\s+)(>|<|>=|<=|=|!=|like)$/i', trim($k), $reg)) {
                     //['name >|<|>=|<=|=|!=|between|like']
                     $paramKey = sprintf(":%s", $reg[1]);
                     $paramKey = $this->uniqueParam($bindParams, $paramKey);
