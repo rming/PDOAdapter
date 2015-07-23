@@ -15,6 +15,7 @@ php classes extends PDO query
         *   [数据操作](#数据操作)
             *   [Quick Start](#quick-start)
             *   [查询 有哪些方法？](#查询-有哪些方法)
+            *   [查询条件 有哪些？](#查询条件-有哪些)
             *   [结果 有哪些方法？](#结果-有哪些方法)
             *   [表名占位符](#表名占位符)
             *   [简单地查询组合](#简单地查询组合)
@@ -187,6 +188,34 @@ class UsersModel extends MyPDOAdapter
 - `query($sql, $params = null, $db = null)` 
 自定义查询
 
+####`查询条件` 有哪些？
+```php
+//WHERE `user_id` = '101';
+$conditions = ['user_id'=>101];
+
+//WHERE `user_id` > '101';
+//=, >, <, >=, <=, !=
+$conditions = ['user_id >'=>101];
+
+//WHERE `user_id` IN ('1','2','3','6','9','109','78')
+$conditions = ['user_id IN'=>[1,2,3,6,9,109,78]];
+
+//WHERE `user_id` BETWEEN '101' AND '200'; 
+$conditions = ['user_id BETWEEN'=>[101, 200]];
+
+//WHERE `user_name` LIKE '%明%'; 
+$conditions = ['user_name like'=>'%明%'];
+
+```
+
+**条件数组中是 `AND` 组合，如果需要使用 `OR` 组合 ，需要自写SQL，或者参考以下：**
+```php
+//WHERE `name` LIKE "王%" OR `age`>'20';
+$conditions = [
+    "`name` LIKE ? OR `age`>?" => ["王%", 20]
+];
+
+```
 
 ####`结果` 有哪些方法？
 - `row()`
