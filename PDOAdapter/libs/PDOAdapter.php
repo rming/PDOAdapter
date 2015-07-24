@@ -477,13 +477,18 @@ class PDOAdapter
                     };
                     switch ($condition) {
                         case 'in':
-                            $whereClouse .= sprintf("`%s` IN (", $reg[1]);
-                            foreach ($makeParamKey($v, ':in_') as $key => $value) {
-                                $paramKey = $this->uniqueParam($bindParams, $key);
-                                $bindParams[$paramKey] = $value;
-                                $whereClouse .= sprintf("%s,", $key); 
+                            //empty array for where in condition
+                            if (empty($v)) {
+                                $whereClouse .='0=1 ';
+                            } else {
+                                $whereClouse .= sprintf("`%s` IN (", $reg[1]);
+                                foreach ($makeParamKey($v, ':in_') as $key => $value) {
+                                    $paramKey = $this->uniqueParam($bindParams, $key);
+                                    $bindParams[$paramKey] = $value;
+                                    $whereClouse .= sprintf("%s,", $key); 
+                                }
+                                $whereClouse = rtrim($whereClouse, ',') . ") ";
                             }
-                            $whereClouse = rtrim($whereClouse, ',') . ") ";
                             break;
                         case 'between':
                             $v = iterator_to_array($makeParamKey($v, ':in_'));
