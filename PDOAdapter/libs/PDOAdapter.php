@@ -441,10 +441,10 @@ class PDOAdapter
     }
 
     /**
-     * lasteInsert data object
+     * lastInsert data object
      * @return object $this
      */
-    public function lasteInsert()
+    public function lastInsert()
     {
         return $this->find($this->getDb()->lastInsertId());
     }

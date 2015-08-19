@@ -82,7 +82,7 @@ CREATE TABLE `app_users` (
 
         $update = false;
         if ($usersModel->insert($userData)->result()) {
-            $user   = $usersModel->lasteInsert()->row();
+            $user   = $usersModel->lastInsert()->row();
             echo "INSERT User{{$user->user_id}}\n";
             $update = $usersModel->update(
                 ['password' => sha1($user->user_id.'=>'.$password)],

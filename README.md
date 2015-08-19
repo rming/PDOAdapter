@@ -153,7 +153,7 @@ class UsersModel extends MyPDOAdapter
         //插入操作影响行数
         $affectedRows = $this->insert($data)->result();      
         //返回刚才插入的那一行数据
-        return $this->lasteInsert()->row()
+        return $this->lastInsert()->row()
     }
 
     ...
@@ -170,7 +170,7 @@ class UsersModel extends MyPDOAdapter
 - `where(array $conditions, $orderBy = null, $limit = null, $offset = null)`
 根据查询条件获取记录
 
-- `lasteInsert()` 
+- `lastInsert()` 
 上一次 INSERT 或 UPDATE 的第一个记录（WHERE {pk}=SELECT LAST_INSERT_ID()）
 
 - `insert(array $attributes)` 
