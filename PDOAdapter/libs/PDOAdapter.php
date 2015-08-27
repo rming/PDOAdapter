@@ -175,9 +175,9 @@ class PDOAdapter
     public function query($sql, $params = null, $db = null)
     {
         $db     = $db ?: $this->getDb();
-
-        $this->_sql      = $this->parseTplVar(trim($sql));
-        $this->_params   = is_array($params) ? $params : (array)$params;
+        $this->_sql    = $this->parseTplVar(trim($sql));
+        $this->_params = is_array($params) ? $params : (array)$params;
+        $this->_params = array_map(function($v){return (string)$v;}, $this->_params);
 
         //set PDOexception handler
         set_exception_handler([$this,'logger']);
@@ -543,14 +543,20 @@ class PDOAdapter
 
         //order by
         if ($orderBy) {
-            //escape bad string in column
-            $orderByArr = explode(',', $orderBy);
-            $orderByArr = array_map(function($orderBy){
-                $orderBy = preg_replace('/^(\S*?)(\s+?)(desc|asc)+?$/i','`'.trim('${1}','`').'`'.' ${3}', trim($orderBy), '-1', $count);
-                return $count? $orderBy : false;
-            }, $orderByArr);
-            //implode to str
-            $orderByStr = implode(',', array_filter($orderByArr)); 
+            //field 支持
+            $matchOrder = preg_match('/^field\((.+?)\)(\s+?)(desc|asc)+?$/i', trim($orderBy));
+            if ($matchOrder) {
+                 $orderByStr = $orderBy;
+            } else {
+                //escape bad string in column
+                $orderByArr = explode(',', $orderBy);
+                $orderByArr = array_map(function($orderBy){
+                    $orderBy = preg_replace('/^(\S*?)(\s+?)(desc|asc)+?$/i','`'.trim('${1}','`').'`'.' ${3}', trim($orderBy), '-1', $count);
+                    return $count? $orderBy : false;
+                }, $orderByArr);
+                //implode to str
+                $orderByStr = implode(',', array_filter($orderByArr)); 
+            }
             $orderBy    = $orderByStr ? sprintf("ORDER BY %s", $orderByStr) : '';
         }
 
